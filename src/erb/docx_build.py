@@ -175,7 +175,7 @@ def setup_styles(doc: Document) -> None:
 # ---------------------------------------------------------------- inline markdown
 
 INLINE = re.compile(r"(\*\*.+?\*\*|\*.+?\*|\[VERIFY:[^\]]*\])")
-SOURCE_TAG = re.compile(r"\s?\[S\d+(?:\s*,\s*S\d+)*\]")
+SOURCE_TAG = re.compile(r"\s?\[(?:S\d+(?:\s*,\s*S\d+)*|M)\]")
 
 
 def add_inline(p, text: str, size: float | None = None, color: str | None = None, bold: bool = False) -> None:

@@ -64,6 +64,12 @@ def cmd_build(args) -> None:
         word.finalize(out)
 
 
+def cmd_lint(args) -> None:
+    from . import lint
+
+    sys.exit(lint.report(args.ticker))
+
+
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(prog="erb", description="3schtocks Equity Research Buddy")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -100,6 +106,10 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--no-charts", action="store_true", help="Reuse existing charts")
     p.add_argument("--word", action="store_true", help="Use Microsoft Word to refresh the TOC and export a PDF")
     p.set_defaults(func=cmd_build)
+
+    p = sub.add_parser("lint", help="Style and sourcing checks on sections/*.md (exit 1 on errors)")
+    p.add_argument("ticker")
+    p.set_defaults(func=cmd_lint)
 
     args = parser.parse_args(argv)
     args.func(args)
