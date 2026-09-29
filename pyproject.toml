@@ -4,7 +4,15 @@ version = "0.1.0"
 description = "3schtocks Equity Research Buddy: initiating coverage drafts for Conscious Investments"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "beautifulsoup4>=4.15.0",
+    "lxml>=6.1.3",
+    "pandas>=3.0.6",
+    "python-dotenv>=1.2.3",
+    "pyyaml>=6.0.3",
+    "requests>=2.34.2",
+    "yfinance>=1.7.0",
+]
 
 [project.scripts]
 erb = "erb.cli:main"
@@ -15,3 +23,8 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/erb"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]

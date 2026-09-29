@@ -17,11 +17,17 @@ Cover (thesis bullets, rating, price targets, key stats, EPS table) · Table of 
 uv sync
 cp .env.example .env   # SEC requires a contact User-Agent
 ```
+Build a facts pack from the command line:
+```bash
+uv run erb facts META          # coverage/META/facts/facts.md + CSVs + filing excerpts
+uv run erb peers META GOOG SNAP PINS RDDT
+uv run pytest
+```
 Then open the repo in Claude Code and say, for example, "let's screen" or "initiate coverage on XYZ".
 
 ## Roadmap
 - [x] Phase 0: scaffold, CLAUDE.md, style guide and section guides
-- [ ] Phase 1: data layer (EDGAR + market data)
+- [x] Phase 1: data layer (`erb facts`, `erb peers`): EDGAR XBRL financials with provenance, segments, filing text, Yahoo market data and consensus
 - [ ] Phase 2: valuation model + tests
 - [ ] Phase 3: charts + .docx builder with Conscious Investments branding
 - [ ] Phase 4: `initiate` skill + lint, end-to-end dry run
