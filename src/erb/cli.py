@@ -70,6 +70,20 @@ def cmd_lint(args) -> None:
     sys.exit(lint.report(args.ticker))
 
 
+def cmd_screen(args) -> None:
+    from . import screen
+
+    w = dict(zip(("value", "quality", "growth", "momentum"), (float(x) for x in args.weights.split(","))))
+    screen.run(min_cap=args.min_cap * 1e9, top=args.top, weights=w)
+
+
+def cmd_memo(args) -> None:
+    from . import memo
+
+    for t in args.tickers:
+        memo.build(t)
+
+
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(prog="erb", description="3schtocks Equity Research Buddy")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -110,6 +124,16 @@ def main(argv: list[str] | None = None) -> None:
     p = sub.add_parser("lint", help="Style and sourcing checks on sections/*.md (exit 1 on errors)")
     p.add_argument("ticker")
     p.set_defaults(func=cmd_lint)
+
+    p = sub.add_parser("screen", help="Rank US-listed stocks on value, quality, growth and momentum")
+    p.add_argument("--min-cap", type=float, default=2.0, help="Minimum market cap in $ bn (default 2)")
+    p.add_argument("--top", type=int, default=30, help="Rows in screen.md (default 30)")
+    p.add_argument("--weights", default="0.30,0.30,0.20,0.20", help="value,quality,growth,momentum")
+    p.set_defaults(func=cmd_screen)
+
+    p = sub.add_parser("memo", help="Pitch memo skeleton(s) for screened tickers")
+    p.add_argument("tickers", nargs="+")
+    p.set_defaults(func=cmd_memo)
 
     args = parser.parse_args(argv)
     args.func(args)

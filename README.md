@@ -25,6 +25,8 @@ uv run erb model META --init   # draft coverage/META/assumptions.yaml, then run 
 uv run erb model META          # rerun after editing assumptions
 uv run erb scaffold META       # write coverage/META/sections/*.md skeletons (add --sample for layout filler)
 uv run erb build META --word   # charts + .docx; --word uses Microsoft Word to refresh the TOC and export a PDF
+uv run erb screen --min-cap 2  # rank ~1,700 US-listed stocks >= $2 bn on value / quality / growth / momentum
+uv run erb memo CF             # one-page pitch memo skeleton for a screened name
 uv run pytest
 ```
 Then open the repo in Claude Code and say, for example, "let's screen" or "initiate coverage on XYZ".
@@ -35,7 +37,7 @@ Then open the repo in Claude Code and say, for example, "let's screen" or "initi
 - [x] Phase 2: valuation model (`erb model`): DCF (stub + mid-year, PP&E roll-forward D&A), forward P/E and EV/EBITDA, bull/base/bear, rating, sensitivity, football field, comps, cover EPS table
 - [x] Phase 3: charts (`erb charts`) + Word report builder (`erb scaffold`, `erb build --word`) with Conscious Investments branding
 - [x] Phase 4: `initiate` skill + `erb lint`; end-to-end dry run on META (Outperform, base PT $951.30) completed
-- [ ] Phase 5: quant screener + `screen` skill
+- [x] Phase 5: quant screener (`erb screen`), pitch memos (`erb memo`) + `screen` skill
 
 ## Disclaimer
 Research drafts produced with this tool are for educational and informational purposes only and are not investment advice. See `guides/disclaimer.md`.
