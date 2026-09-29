@@ -1,0 +1,23 @@
+# Conscious Investments brand tokens. Neutrals sampled from the logo (assets/logo.png);
+# accents chosen to sit with warm charcoal/stone and validated with the dataviz skill's
+# palette validator (light mode, white surface):
+#   4-slot order passes all adjacent checks (worst CVD dE 9.6, normal-vision dE 20.2)
+#   first 3 slots pass all-pairs (worst CVD dE 9.6, normal-vision 18.7) -> cap 3 for pies/scenarios
+name: Conscious Investments
+logo: logo_transparent.png        # cleaned 6x upscale (scripts/clean_logo.py)
+logo_cover: logo_hires.png
+fonts:
+  heading: Georgia                # serif caps echo the logo lettering
+  body: Calibri
+  chart: DejaVu Sans              # bundled with matplotlib, renders identically everywhere
+colors:
+  ink: "#2E2C29"                  # primary text, sampled from logo linework (deepened for print)
+  text_secondary: "#5F5B55"
+  text_muted: "#8C8880"
+  grid: "#E3E0D8"
+  paper: "#ECEAE1"                # logo background tone: table headers, sidebar fill
+  paper_light: "#F6F5F0"
+  surface: "#FFFFFF"
+  categorical: ["#2a68a8", "#d27030", "#3a9a7a", "#8a6db8"]   # slate, clay, sage, heather (fixed order)
+  scenario: {bear: "#d27030", base: "#2a68a8", bull: "#3a9a7a", price: "#2E2C29"}
+  other: "#B9B5AD"                # "Other" / de-emphasized series

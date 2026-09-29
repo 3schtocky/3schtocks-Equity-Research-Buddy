@@ -7,7 +7,10 @@ requires-python = ">=3.12"
 dependencies = [
     "beautifulsoup4>=4.15.0",
     "lxml>=6.1.3",
+    "matplotlib>=3.11.2",
     "pandas>=3.0.6",
+    "pillow>=12.3.0",
+    "python-docx>=1.2.0",
     "python-dotenv>=1.2.3",
     "pyyaml>=6.0.3",
     "requests>=2.34.2",
@@ -26,5 +29,6 @@ packages = ["src/erb"]
 
 [dependency-groups]
 dev = [
+    "pypdfium2>=5.13.0",
     "pytest>=9.1.1",
 ]

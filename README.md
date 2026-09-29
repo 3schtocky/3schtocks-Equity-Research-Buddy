@@ -23,6 +23,8 @@ uv run erb facts META          # coverage/META/facts/facts.md + CSVs + filing ex
 uv run erb peers META GOOG SNAP PINS RDDT
 uv run erb model META --init   # draft coverage/META/assumptions.yaml, then run the model
 uv run erb model META          # rerun after editing assumptions
+uv run erb scaffold META       # write coverage/META/sections/*.md skeletons (add --sample for layout filler)
+uv run erb build META --word   # charts + .docx; --word uses Microsoft Word to refresh the TOC and export a PDF
 uv run pytest
 ```
 Then open the repo in Claude Code and say, for example, "let's screen" or "initiate coverage on XYZ".
@@ -31,7 +33,7 @@ Then open the repo in Claude Code and say, for example, "let's screen" or "initi
 - [x] Phase 0: scaffold, CLAUDE.md, style guide and section guides
 - [x] Phase 1: data layer (`erb facts`, `erb peers`): EDGAR XBRL financials with provenance, segments, filing text, Yahoo market data and consensus
 - [x] Phase 2: valuation model (`erb model`): DCF (stub + mid-year, PP&E roll-forward D&A), forward P/E and EV/EBITDA, bull/base/bear, rating, sensitivity, football field, comps, cover EPS table
-- [ ] Phase 3: charts + .docx builder with Conscious Investments branding
+- [x] Phase 3: charts (`erb charts`) + Word report builder (`erb scaffold`, `erb build --word`) with Conscious Investments branding
 - [ ] Phase 4: `initiate` skill + lint, end-to-end dry run
 - [ ] Phase 5: quant screener + `screen` skill
 

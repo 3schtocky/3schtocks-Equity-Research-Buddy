@@ -38,6 +38,32 @@ def cmd_model(args) -> None:
     valuation.run(args.ticker)
 
 
+def cmd_charts(args) -> None:
+    from . import charts
+
+    charts.render_all(args.ticker)
+
+
+def cmd_scaffold(args) -> None:
+    from . import scaffold
+
+    scaffold.scaffold(args.ticker, sample=args.sample, force=args.force)
+
+
+def cmd_build(args) -> None:
+    from . import docx_build
+
+    if not args.no_charts:
+        from . import charts
+
+        charts.render_all(args.ticker)
+    out = docx_build.build(args.ticker, update_on_open=not args.word)
+    if args.word:
+        from . import word
+
+        word.finalize(out)
+
+
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(prog="erb", description="3schtocks Equity Research Buddy")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -58,6 +84,22 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--init", action="store_true", help="Draft assumptions.yaml from the facts pack first")
     p.add_argument("--force", action="store_true", help="With --init, overwrite existing assumptions")
     p.set_defaults(func=cmd_model)
+
+    p = sub.add_parser("charts", help="Render report charts from model.json and the facts pack")
+    p.add_argument("ticker")
+    p.set_defaults(func=cmd_charts)
+
+    p = sub.add_parser("scaffold", help="Write sections/*.md skeletons with exhibit tokens")
+    p.add_argument("ticker")
+    p.add_argument("--sample", action="store_true", help="Fill with marked layout filler text")
+    p.add_argument("--force", action="store_true", help="Overwrite existing section files")
+    p.set_defaults(func=cmd_scaffold)
+
+    p = sub.add_parser("build", help="Build the .docx report (renders charts first)")
+    p.add_argument("ticker")
+    p.add_argument("--no-charts", action="store_true", help="Reuse existing charts")
+    p.add_argument("--word", action="store_true", help="Use Microsoft Word to refresh the TOC and export a PDF")
+    p.set_defaults(func=cmd_build)
 
     args = parser.parse_args(argv)
     args.func(args)

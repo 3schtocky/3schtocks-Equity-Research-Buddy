@@ -41,6 +41,16 @@ Output goes to `coverage/<TICKER>/facts/`. Start from `facts.md`, then use `prov
 - **Peers:** set `peers:` (4–6 tickers) before the final run so comps and the football field populate.
 - Ethan confirms `erp` and `sp500_expected_return` (defaults 4.5% and 8.0%).
 
+## Report assembly (`erb scaffold`, `erb charts`, `erb build --word`)
+- `erb scaffold TICKER` writes `sections/00_cover.md` … `10_appendix.md` with guidance comments and exhibit tokens. Write prose into these files only. Never hand-edit the .docx.
+- Markdown subset: `#`/`##` headings (H1 = main section, H2 = punny subsection), paragraphs, `- ` bullets, `**bold**`, pipe tables, `![Title](file.png)` with a `Source:` line after it for custom charts saved in `charts/`.
+- Exhibit tokens on their own line: `{{price_targets}}`, `{{company_snapshot}}`, `{{segment_mix}}`, `{{geography_mix}}`, `{{product_mix}}`, `{{band_pe}}`, `{{band_ev_ebitda}}`, `{{comps}}`, `{{assumptions}}`, `{{dcf}}`, `{{sensitivity}}`, `{{football_field}}`, `{{financial_summary}}`, `{{financial_grid}}`.
+- In `01_investment_summary.md`, the `## Bull Case` / `## Base Case` / `## Bear Case` headings are replaced by the price target and return from model.json. Write only the narrative under them.
+- Cover front matter: `tagline`, `report_date`, `holdings_disclosure` (ask Ethan), `ceo`, `hq`, `employees`, `gics_sector`, `gics_sub_industry`.
+- `[Sn]` tags are stripped from the .docx (sources live in sources.md). `[VERIFY: …]` stays, highlighted yellow.
+- `erb build TICKER --word` makes Microsoft Word refresh the TOC and page numbers, save, and export a PDF next to the .docx. Render the PDF pages to PNG and look at them before telling Ethan the draft is ready.
+- Charts follow the dataviz rules: a single y-axis, the brand palette from `assets/brand.yaml` in fixed order, and at most 3 hues where every pair appears at once.
+
 ## Rating convention
 **Outperform / Neutral / Underperform** relative to the S&P 500's expected return over a 12 to 18 month horizon. Outperform if the base-case total return beats the S&P 500 expected return by more than 5 percentage points. Underperform if it trails by more than 5 points. Otherwise Neutral. Bull, base and bear price targets are always shown.
 
