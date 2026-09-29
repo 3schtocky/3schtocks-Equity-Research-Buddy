@@ -48,6 +48,7 @@ Output goes to `coverage/<TICKER>/facts/`. Start from `facts.md`, then use `prov
 - In `01_investment_summary.md`, the `## Bull Case` / `## Base Case` / `## Bear Case` headings are replaced by the price target and return from model.json. Write only the narrative under them.
 - Cover front matter: `tagline`, `report_date`, `holdings_disclosure` (ask Ethan), `ceo`, `hq`, `employees`, `gics_sector`, `gics_sub_industry`.
 - `[Sn]` tags are stripped from the .docx (sources live in sources.md). `[VERIFY: …]` stays, highlighted yellow.
+- **Ethan edits in Word.** Every build writes both the `.docx` (for editing) and the `.pdf`. If Ethan edited the `.docx` after the last build, `erb build` first saves his version as `<name>_your-edits_<timestamp>.docx`. Read that file (python-docx), port each change into `sections/*.md` (or `assumptions.yaml` if a number changed), rebuild, and tell him which edits were carried over. Never discard his edits.
 - `erb build TICKER --word` makes Microsoft Word refresh the TOC and page numbers, save, and export a PDF next to the .docx. Render the PDF pages to PNG and look at them before telling Ethan the draft is ready.
 - Charts follow the dataviz rules: a single y-axis, the brand palette from `assets/brand.yaml` in fixed order, and at most 3 hues where every pair appears at once.
 
