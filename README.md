@@ -34,7 +34,7 @@ Then open the repo in Claude Code and say, for example, "let's screen" or "initi
 - [x] Phase 1: data layer (`erb facts`, `erb peers`): EDGAR XBRL financials with provenance, segments, filing text, Yahoo market data and consensus
 - [x] Phase 2: valuation model (`erb model`): DCF (stub + mid-year, PP&E roll-forward D&A), forward P/E and EV/EBITDA, bull/base/bear, rating, sensitivity, football field, comps, cover EPS table
 - [x] Phase 3: charts (`erb charts`) + Word report builder (`erb scaffold`, `erb build --word`) with Conscious Investments branding
-- [ ] Phase 4: `initiate` skill + lint, end-to-end dry run
+- [x] Phase 4: `initiate` skill + `erb lint`; end-to-end dry run on META (Outperform, base PT $951.30) completed
 - [ ] Phase 5: quant screener + `screen` skill
 
 ## Disclaimer

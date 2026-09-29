@@ -87,6 +87,10 @@ def _model_prices(cdir: Path) -> tuple[dict, str | None]:
     m = json.loads(path.read_text())
     cur = m["cover"]["currency"] or "USD"
     pts = {s: m["scenarios"][s]["price_target"] for s in ("bear", "base", "bull")}
+    # every per-share value the model publishes may be quoted (scenario PTs and each method)
+    for s in ("bear", "base", "bull"):
+        for k, v in m["scenarios"][s].get("methods", {}).items():
+            pts[f"{s}_{k}"] = v
     pts["_currency"] = cur
     return pts, m["rating"]["rating"]
 
@@ -115,7 +119,8 @@ def lint(ticker: str) -> list[Issue]:
                 add("error", "em-dash", "em dash; use a comma, colon or parentheses")
             if re.search(r"[A-Za-z]\s?–\s?[A-Za-z]", s):
                 add("warn", "number-style", "en dash between words; en dashes are for numeric ranges")
-            if re.search(r"\b(I|I'm|I've|my|me|mine)\b", re.sub(r"\[.*?\]", "", s)):
+            if not s.startswith("#") and re.search(r"\b(I|I'm|I've|my|me|mine)\b",
+                                                   re.sub(r"\[.*?\]|Exhibit [IVX]+", "", s)):
                 add("error", "first-person", "first person singular; write as the team / the Fund")
             low = s.lower()
             for w in AI_ISMS:
@@ -149,8 +154,15 @@ def lint(ticker: str) -> list[Issue]:
                     if FIGURE.search(TAG.sub("", no_verify)) and not TAG.search(sent) and "[VERIFY" not in sent:
                         add("error", "unsourced", f"figure without [Sn]/[M]: \"{sent[:90]}\"")
             # price targets / rating must match the model
-            if allowed_prices and re.search(r"price target|\bPT\b", s, re.I):
-                for p in re.findall(r"\$[\d,]+(?:\.\d+)?", s):
+            if allowed_prices:
+                # only amounts stated as *our* target, e.g. "price target of $951.30", "bull case of $1,324.91";
+                # analyst actions ("lifted its price target from $640 to $796") are other people's targets
+                ours = []
+                for sent in SENTENCE_END.split(s):
+                    if re.search(r"\b(lifted|raised|cut|lowered|reiterat|maintain|Street|consensus|analyst)", sent, re.I):
+                        continue
+                    ours += re.findall(r"(?:price target|\bPT|(?:bear|base|bull)[ -]cases?)(?:\s+(?:of|at|is|to))?\s+(\$[\d,]+(?:\.\d+)?)", sent, re.I)
+                for p in ours:
                     if p not in allowed_prices and p.rstrip("0").rstrip(".") not in {a.rstrip("0").rstrip(".") for a in allowed_prices}:
                         add("error", "pt-mismatch", f"{p} near 'price target' is not a model.json target")
             if rating:

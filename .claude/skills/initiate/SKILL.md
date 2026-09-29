@@ -43,7 +43,7 @@ open: <what is waiting on whom>
      rating moves; do not edit assumptions.yaml before his review.
 2. Log every source in `sources.md` as you go (format in `guides/brief_template.md`). Only cite pages you actually opened.
 3. Write `brief.md` following `guides/brief_template.md`. Every figure tagged `[Sn]` or `[F]`. Mark anything uncertain `[VERIFY: ...]`.
-4. Update STATUS.md to `2-brief-review`, then **stop**. Give Ethan a short summary: the snapshot, 2–4 candidate thesis pillars, the proposed peers, the draft model's rating and warnings, and the "Questions for Ethan" list (always including the holdings disclosure). Wait for his answers.
+4. Update STATUS.md to `2-brief-review`, then **stop**. Give Ethan a short summary (snapshot, 2–4 candidate thesis pillars, proposed peers, the draft model's rating and warnings), then ask every "Question for Ethan" with the AskUserQuestion tool (multiple choice with a recommended option, up to 4 per call; always include the holdings disclosure). Never leave questions as a list in prose. Wait for his answers.
 
 ## Stage 3: Model
 1. Record Ethan's decisions in STATUS.md.
@@ -55,6 +55,7 @@ open: <what is waiting on whom>
 1. `uv run erb scaffold TICKER` (never `--sample`), then fill `sections/*.md` in order 02 → 10, then 01, then 00 last (the cover summarizes everything).
 2. Before writing, read `guides/style_guide.md` and the section's guide in `guides/section_guides/`. Voice: "our team", "the Fund", dense numbers, punny H2 subheadings, the rating and PTs only as `model.json` states them.
 3. Tag every sentence that carries a figure: `[Sn]` for sourced facts, `[M]` for model outputs. Numbers you cannot source become `[VERIFY: ...]`.
+   Quote model numbers exactly as `model.json` states them (e.g. a 21.9x target multiple, not the market's 22.0x). Before handing off, re-read each claim against its source and cut anything you cannot point to.
 4. Fill the cover front matter (tagline, CEO, HQ, employees, GICS, holdings disclosure from Ethan).
 
 ## Stage 5: Build and check

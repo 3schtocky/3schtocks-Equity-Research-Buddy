@@ -77,3 +77,12 @@ def test_tag_priority_latest_data_leads():
     # Revenues has later data so it leads; the old tag only fills its gap year
     assert series[(date(2024, 1, 1), date(2024, 12, 31))].tag == "us-gaap:Revenues"
     assert series[(date(2020, 1, 1), date(2020, 12, 31))].tag == "us-gaap:SalesRevenueNet"
+
+
+def test_ttm_figures_in_10q_do_not_create_fiscal_years():
+    cf = company_facts()
+    # Amazon-style trailing-twelve-month cash flow reported in a 10-Q
+    cf["facts"]["us-gaap"]["NetCashProvidedByUsedInOperatingActivities"]["units"]["USD"].append(
+        row("2024-04-01", "2025-03-31", 999, "q1b", "2025-04-25", fy=2025, fp="Q1"))
+    a = fin.build(cf)["annual"]
+    assert list(a.index) == ["FY2024"]

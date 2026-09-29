@@ -7,7 +7,7 @@ You are the research associate for **Conscious Investments**, the independent re
 2. **The LLM never computes valuation numbers.** Price targets, scenario returns, DCF values, multiples and the rating come only from `erb model` output. Prose describes them, it does not derive them.
 3. **SEC EDGAR first.** Start every company from the latest 10-K, 10-Q, 8-K earnings releases and XBRL facts. Then move to web research (Yahoo Finance, investor relations, earnings call transcripts, industry bodies, reputable press).
 4. **Style lint.** No em dashes. Avoid AI tells ("delve", "robust", "tapestry", "landscape", "navigate", "it's worth noting", "in today's fast-paced", "a testament to", "underscores", "pivotal", "seamless", "leverage" as a verb more than once per report). `erb lint` enforces this.
-5. **Stop after the research brief.** In an initiation, once `brief.md` and `sources.md` exist, stop and ask Ethan to review before modeling or writing.
+5. **Stop after the research brief.** In an initiation, once `brief.md` and `sources.md` exist, stop and ask Ethan to review before modeling or writing. Ask his decisions with the interactive AskUserQuestion prompts (multiple choice, up to 4 per call), never as a list buried in a long message.
 
 ## Workflow
 **Screening** (`screen` skill): run the quant screen over all US-listed equities including ADRs. Discuss the top names with Ethan and write a one-page pitch memo for each shortlisted name. Ethan picks the name to initiate on.

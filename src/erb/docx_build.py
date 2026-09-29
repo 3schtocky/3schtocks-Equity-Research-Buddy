@@ -256,9 +256,15 @@ def data_table(container, header: list[str], rows: list[list[str]], col_w: list[
                 r.bold = True
             elif (i - 1) in shade_rows:
                 shade(c, COL["paper_light"])
-    for row in t.rows:
+    for i, row in enumerate(t.rows):
+        trPr = row._tr.get_or_add_trPr()
+        cant = OxmlElement("w:cantSplit")
+        trPr.append(cant)
         for c in row.cells:
             mark_size(c.paragraphs[0], size)
+            # keep tables of up to ~25 rows on one page: every row sticks to the next
+            if i < len(t.rows) - 1 and len(t.rows) <= 25:
+                c.paragraphs[0].paragraph_format.keep_with_next = True
     if col_w:
         widths(t, col_w)
     return t
@@ -317,9 +323,18 @@ def md_table(container, lines: list[str]):
     rows = [r for r in rows if not all(re.fullmatch(r":?-{2,}:?", c) for c in r)]
     if not rows:
         return
-    data_table(container, [SOURCE_TAG.sub("", c).replace("**", "") for c in rows[0]],
-               [[SOURCE_TAG.sub("", c).replace("**", "") for c in r] for r in rows[1:]])
-    container.add_paragraph().paragraph_format.space_after = Pt(2)
+    header = [SOURCE_TAG.sub("", c).replace("**", "") for c in rows[0]]
+    body = [[SOURCE_TAG.sub("", c).replace("**", "") for c in r] for r in rows[1:]]
+    # widths proportional to content (text-heavy columns get room), capped to the text width
+    lens = [max(len(r[j]) if j < len(r) else 0 for r in [header] + body) for j in range(len(header))]
+    lens = [min(max(n, 6), 60) for n in lens]
+    col_w = [TEXT_W * n / sum(lens) for n in lens]
+    t = data_table(container, header, body, col_w)
+    numeric = re.compile(r"^[\s$€£(]*-?[\d.,]+\s*(%|x|bn|mn|tn|bps)?\)?$")
+    for j in range(len(header)):
+        if not all(numeric.match(r[j]) for r in body if j < len(r) and r[j]):
+            for row in t.rows:
+                row.cells[j].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.LEFT
 
 
 # ---------------------------------------------------------------- report context
@@ -585,6 +600,9 @@ def render_md(doc, text: str, ctx: Ctx, scenario_headings: bool = False) -> None
                 if level == 1:
                     doc.add_paragraph().add_run().add_break(WD_BREAK.PAGE) if ctx_has_content(doc) else None
                 doc.add_heading(title.upper() if level == 1 else title, level=min(level, 3))
+        elif s.lower().startswith("source:"):
+            flush()
+            source_line(doc, SOURCE_TAG.sub("", s))
         elif s.startswith("- ") or s.startswith("* "):
             flush()
             p = doc.add_paragraph(style="List Bullet")
@@ -864,6 +882,9 @@ def sidebar(cell, ctx: Ctx, w: float) -> None:
             if i == 0:
                 shade(cc, COL["paper"])
     widths(t3, [w * 0.25, w * 0.24, w * 0.24, w * 0.24])
+    if any("override" in (k or "") for y in years for k in et["years"][y]["kinds"]):
+        small(cell, "*Street-basis reported EPS (excludes one-time tax items); other actuals from filings, "
+                    "estimates from our model.", size=5.8, italic=True)
 
     label("ANALYST")
     for text, bold in ((AUTHOR["name"], True), (AUTHOR["email"], False)):

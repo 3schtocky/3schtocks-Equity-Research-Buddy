@@ -122,7 +122,9 @@ def fiscal_years(flow_series: list[dict], fy_map: dict) -> list[tuple[date, date
     periods: dict[date, date] = {}
     for series in flow_series:
         for (s, e), f in series.items():
-            if 350 <= (f.days or 0) <= 380:
+            # Only annual filings define fiscal years: some 10-Qs report trailing-twelve-month
+            # figures (e.g. Amazon's TTM cash flows) that would otherwise look like extra years
+            if 350 <= (f.days or 0) <= 380 and f.form in ANNUAL_FORMS:
                 periods.setdefault(e, s)
     out = []
     for e, s in sorted(periods.items(), key=lambda kv: kv[0]):
