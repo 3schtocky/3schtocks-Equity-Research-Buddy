@@ -17,3 +17,6 @@ reference/
 
 # OS
 .DS_Store
+
+# Local data cache (EDGAR, market data)
+data/
