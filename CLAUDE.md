@@ -28,6 +28,19 @@ Output goes to `coverage/<TICKER>/facts/`. Start from `facts.md`, then use `prov
 - **Sector lenses.** For banks and brokers, gross margin is meaningless; use P/TBV and ROTE. For REITs, P/E is the wrong lens; use P/FFO and P/AFFO. Utilities: P/E plus rate base growth.
 - **Segments:** members can overlap (a region and a country inside it). Percentages are always of consolidated revenue.
 
+## Valuation model (`erb model TICKER [--init]`)
+`--init` drafts `coverage/<TICKER>/assumptions.yaml` from the facts pack, with every default's source in a comment. `erb model TICKER` writes `model.json` (scenarios, methods, rating, sensitivity, football field, comps, cover stats, EPS table) and `projections_<scenario>.csv`. How to work with it:
+- **The draft starts at the Street.** FY1–FY2 EBITDA margins are solved so model EPS equals consensus. After that, margins hold flat and revenue growth fades to 4.0%. Any deviation from consensus is a deliberate call and must be argued in the report.
+- **Every edit gets a reason.** When you change an assumption, replace its comment with `# why: <reason> [Sn]`, citing guidance, a filing or a source from `sources.md`.
+- **Resolve every WARNING** printed by the model, or explain in Valuation Analysis why it stands (e.g. terminal value share, implied perpetual growth, methods disagreeing, EPS vs consensus).
+- **Default multiples are forward-on-forward with no re-rating** (current NTM P/E and current EV / NTM EBITDA). A re-rating needs a thesis.
+- **CapEx and D&A:** D&A rolls net PP&E forward. Update `capex_pct_rev` from management guidance. Fading CapEx intensity after a build-out cycle is a thesis call.
+- **Financials** (SIC 6000–6799, not REITs) default to P/E only; add P/TBV via `metric_multiple`. **REITs**: replace P/E with P/FFO via `metric_multiple`.
+- **ADRs:** confirm `listing.shares_per_unit` (the ADR ratio) in the 20-F, then delete the `todo`.
+- **Cover EPS table:** if `eps_basis: adjusted`, fill `eps_actual_overrides` with adjusted actuals from the earnings releases.
+- **Peers:** set `peers:` (4–6 tickers) before the final run so comps and the football field populate.
+- Ethan confirms `erp` and `sp500_expected_return` (defaults 4.5% and 8.0%).
+
 ## Rating convention
 **Outperform / Neutral / Underperform** relative to the S&P 500's expected return over a 12 to 18 month horizon. Outperform if the base-case total return beats the S&P 500 expected return by more than 5 percentage points. Underperform if it trails by more than 5 points. Otherwise Neutral. Bull, base and bear price targets are always shown.
 

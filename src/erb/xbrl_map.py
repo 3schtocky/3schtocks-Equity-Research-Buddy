@@ -110,6 +110,8 @@ FLOW = {
             "PaymentsToAcquirePropertyPlantAndEquipment",
             "PaymentsToAcquireProductiveAssets",
             "PaymentsForCapitalImprovements",
+            "PaymentsToDevelopRealEstateAssets",
+            "PaymentsToAcquireAndDevelopRealEstate",
         ],
         "ifrs-full": ["PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities"],
     },
@@ -141,6 +143,14 @@ INSTANT = {
     "inventory": {"us-gaap": ["InventoryNet"], "ifrs-full": ["Inventories"]},
     "current_assets": {"us-gaap": ["AssetsCurrent"], "ifrs-full": ["CurrentAssets"]},
     "goodwill": {"us-gaap": ["Goodwill"], "ifrs-full": ["Goodwill"]},
+    "ppe_net": {
+        "us-gaap": [
+            "PropertyPlantAndEquipmentNet",
+            "PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAfterAccumulatedDepreciationAndAmortization",
+            "RealEstateInvestmentPropertyNet",
+        ],
+        "ifrs-full": ["PropertyPlantAndEquipment"],
+    },
     "total_assets": {"us-gaap": ["Assets"], "ifrs-full": ["Assets"]},
     "current_liabilities": {"us-gaap": ["LiabilitiesCurrent"], "ifrs-full": ["CurrentLiabilities"]},
     "total_liabilities": {"us-gaap": ["Liabilities"], "ifrs-full": ["Liabilities"]},

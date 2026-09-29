@@ -25,6 +25,19 @@ def cmd_peers(args) -> None:
     print(f"Wrote {path}")
 
 
+def cmd_model(args) -> None:
+    from . import valuation
+    from .config import coverage_dir
+
+    path = coverage_dir(args.ticker) / "assumptions.yaml"
+    if args.init:
+        if path.exists() and not args.force:
+            sys.exit(f"{path} exists; edit it, or pass --force to overwrite it")
+        path.write_text(valuation.draft_assumptions(args.ticker))
+        print(f"Wrote {path}")
+    valuation.run(args.ticker)
+
+
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(prog="erb", description="3schtocks Equity Research Buddy")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -39,6 +52,12 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("ticker")
     p.add_argument("peers", nargs="+")
     p.set_defaults(func=cmd_peers)
+
+    p = sub.add_parser("model", help="Run the valuation model (DCF, multiples, scenarios, rating)")
+    p.add_argument("ticker")
+    p.add_argument("--init", action="store_true", help="Draft assumptions.yaml from the facts pack first")
+    p.add_argument("--force", action="store_true", help="With --init, overwrite existing assumptions")
+    p.set_defaults(func=cmd_model)
 
     args = parser.parse_args(argv)
     args.func(args)
