@@ -28,6 +28,19 @@ open: <what is waiting on whom>
    - industry data: size, growth, share (industry bodies, government statistics, research firms; name the source and year)
    - an event timeline for the last 12–24 months (earnings reactions, guidance changes, M&A, regulation, competitors)
    - the Street debate: bull and bear arguments from reputable press; never invent analyst quotes or targets
+   Lessons from the first dry run (META, Sep'26):
+   - Company facts come from the 8-K earnings releases and 10-Q/10-K, not press. Pull every release of the last 4–6 quarters
+     (`edgar.filings(cik, ('8-K',))` with items 2.02, then `filings.earnings_release`) to build the guidance timeline.
+   - Stock reactions come from `facts/prices.csv` (close before the event vs the next close and +5 days), never from press quotes;
+     press prices and even dates are often wrong.
+   - The price data points to events: look for big one-day moves the filings don't explain and research those (META's
+     +24% September rally was an AI product launch that no filing mentioned yet).
+   - Many news sites block fetching (CNBC, CNN, Quartz returned 403/451). Try Yahoo Finance, company blogs/IR, government
+     and regulator releases, then other outlets. Search-result summaries are not sources: only cite pages you opened.
+   - When sources disagree (analyst targets, deal sizes, guidance ranges), prefer the primary document, and write the
+     conflict into the brief with a `[VERIFY]` rather than picking one silently.
+   - For Ethan's calls, run what-ifs on the draft assumptions in memory (`model.run(modified_dict)`) and show how the
+     rating moves; do not edit assumptions.yaml before his review.
 2. Log every source in `sources.md` as you go (format in `guides/brief_template.md`). Only cite pages you actually opened.
 3. Write `brief.md` following `guides/brief_template.md`. Every figure tagged `[Sn]` or `[F]`. Mark anything uncertain `[VERIFY: ...]`.
 4. Update STATUS.md to `2-brief-review`, then **stop**. Give Ethan a short summary: the snapshot, 2–4 candidate thesis pillars, the proposed peers, the draft model's rating and warnings, and the "Questions for Ethan" list (always including the holdings disclosure). Wait for his answers.
