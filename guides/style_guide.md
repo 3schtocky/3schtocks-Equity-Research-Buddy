@@ -4,7 +4,7 @@ Derived from 16 Owl Fund initiations (2024–2025) in `reference/owl/`. Use it f
 
 ## Voice
 - **Scientific, number-dense narrative.** Nearly every sentence carries a figure, a date or a named entity. Aim for 2–4 figures per sentence-pair. Claims are specific ("Reels watch time reached 67.0% of TikTok's levels in Jul'25, up from 56.0% in CY'22"), never vague ("engagement grew strongly").
-- **First person plural, analyst stance.** Use "We believe", "We view", "Our base case". The analyst takes positions and says what the Street is missing: "the Street is focusing on X without considering Y."
+- **Institutional team voice.** Use "Our team believes", "We view", "Our base case", "the Fund". Never "I". The analyst takes positions and says what the Street is missing: "the Street is focusing on X without considering Y."
 - **Playful headings, serious prose.** Section headers are fixed and ALL CAPS. Subheadings are puns, pop-culture nods or memes ("Pick Me, Choose Me", "Reels Demons", "Sabine Been Him", "New Lines, Who Dis?"). The body under a funny heading stays rigorous. Each subheading should still hint at the content.
 - **Cover tagline:** one short exclamatory pun on the company name or business, under the company name ("Virtual Gains, Real Returns!", "Booking is Cooking!", "Paving The Road To Success!").
 - **Paragraph shape:** 5–8 dense sentences. Topic sentence, then evidence, then "so what" for the stock. Subsections run 1–2 paragraphs.
@@ -12,7 +12,7 @@ Derived from 16 Owl Fund initiations (2024–2025) in `reference/owl/`. Use it f
 ## Naming
 - First mention: full legal name with ticker, e.g. "Meta Platforms, Inc. (META)". After that, the ticker stands in for the company ("META", "JEF") alongside "the Company" (capital C).
 - Other public companies are referred to by ticker (GOOG, AMZN, AAPL, NVDA). Private companies are named (OpenAI, TikTok).
-- "the Street" for sell-side consensus. "our team" / "we" for the author.
+- "the Street" for sell-side consensus. "our team" / "we" for the author; "the Fund" for Conscious Investments (e.g. "over the Fund's investment horizon", "a strong fit for the Fund").
 
 ## Number and date mechanics
 | Item | Format | Examples |
@@ -48,4 +48,4 @@ Standard abbreviations: YoY, QoQ, YTD, NTM, LTM, CAGR, TAM, MAU, DAU, ARPU, EPS,
 - AI tells: delve, robust, tapestry, landscape, navigate, pivotal, seamless, underscores, "a testament to", "it's worth noting", "in today's ...".
 - Hedging filler ("it could be argued that"). Take a view.
 - Unsourced numbers. Use `[VERIFY: ...]` instead of guessing.
-- Fund or portfolio language ("the Fund's investment horizon", "Broader Portfolio Fit"). Conscious Investments is a research imprint. Say "our 12–18 month horizon".
+- First person singular ("I", "my"). Always write as the team or the Fund.

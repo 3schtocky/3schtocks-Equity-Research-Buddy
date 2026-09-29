@@ -8,4 +8,4 @@
 - The contrarian point: what the Street is focused on, and why that focus is short-sighted or wrong.
 - Exhibits (auto): "<TICKER> One-Year NTM P/E", "Two-Year NTM P/E" and "Three-Year NTM P/E" (or EV/EBITDA) with the median line. Source: market data.
 
-**Rule:** No "Broader Portfolio Fit" subsection (we are not a fund). If sector positioning matters, fold it into the thesis.
+**Optional:** a "Broader Portfolio Fit" subsection on how the name positions the Fund within its sector (e.g. sector ETF weights, complementary names already covered).
