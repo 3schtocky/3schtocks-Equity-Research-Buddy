@@ -33,3 +33,15 @@ def test_full_build_has_all_sections_and_no_unrendered_tokens(tmp_path):
     assert not re.search(r"\{\{\s*\w+\s*\}\}", text)
     assert not re.search(r"\[S\d+\]", text)
     assert len(d.tables) >= 6
+
+
+def test_protect_edits_backs_up_docx_changed_after_build(tmp_path):
+    import os, time
+    out = tmp_path / "report.docx"
+    out.write_text("built")
+    docx_build.mark_built(tmp_path)
+    assert docx_build.protect_edits(out, tmp_path, log=lambda *_: None) is None  # untouched: no backup
+    later = time.time() + 60
+    os.utime(out, (later, later))  # simulate Ethan saving in Word a minute later
+    backup = docx_build.protect_edits(out, tmp_path, log=lambda *_: None)
+    assert backup is not None and backup.exists() and "_your-edits_" in backup.name

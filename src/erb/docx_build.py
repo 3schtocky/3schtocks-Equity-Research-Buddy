@@ -955,6 +955,27 @@ def section_files(ctx: Ctx) -> list[Path]:
     return sorted((ctx.dir / "sections").glob("*.md"))
 
 
+STAMP = ".last_build"
+
+
+def mark_built(cdir: Path) -> None:
+    """Record when the report was last written by erb (build or Word finalization)."""
+    (cdir / STAMP).touch()
+
+
+def protect_edits(out: Path, cdir: Path, log=print) -> Path | None:
+    """If the .docx was edited after our last build (e.g. by Ethan in Word), keep a copy before overwriting."""
+    stamp = cdir / STAMP
+    if not out.exists() or not stamp.exists() or out.stat().st_mtime <= stamp.stat().st_mtime + 2:
+        return None
+    from datetime import datetime
+    import shutil
+    backup = out.with_name(f"{out.stem}_your-edits_{datetime.now():%Y%m%d-%H%M}{out.suffix}")
+    shutil.copy2(out, backup)
+    log(f"NOTE: the .docx was edited after the last build; saved your version as {backup.name}")
+    return backup
+
+
 def build(ticker: str, log=print, update_on_open: bool = True) -> Path:
     ctx = Ctx(ticker)
     files = section_files(ctx)
@@ -1003,7 +1024,9 @@ def build(ticker: str, log=print, update_on_open: bool = True) -> Path:
 
     name = re.sub(r"[^A-Za-z0-9]+", "-", ctx.name).strip("-")
     out = ctx.dir / f"CI_{name}_{ctx.ticker}_Initiating-Coverage_{date.fromisoformat(str(front.get('report_date') or date.today()))}.docx"
+    protect_edits(out, ctx.dir, log)
     doc.save(out)
+    mark_built(ctx.dir)
     for t in sorted(set(ctx.missing_tokens)):
         log(f"NOTE: exhibit not available: {t}")
     log(f"Wrote {out}")

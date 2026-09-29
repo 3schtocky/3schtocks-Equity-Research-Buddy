@@ -40,5 +40,6 @@ def finalize(docx: Path, log=print) -> Path | None:
         msg = getattr(exc, "stderr", "") or str(exc)
         log(f"NOTE: Word finalization skipped ({msg.strip()[:200]}). The .docx asks to update fields on open.")
         return None
+    (docx.parent / ".last_build").touch()  # Word's save is ours, not an edit
     log(f"Word refreshed the TOC and exported {pdf.name}")
     return pdf
