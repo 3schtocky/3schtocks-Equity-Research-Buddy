@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+*.egg-info/
+
+# Secrets
+.env
+
+# Coverage work product (drafts, briefs, models) stays local
+coverage/*
+!coverage/.gitkeep
+
+# Third-party reference reports (copyright): kept local only
+reference/
+
+# OS
+.DS_Store
