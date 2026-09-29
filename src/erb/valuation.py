@@ -84,7 +84,7 @@ def draft_assumptions(ticker: str) -> str:
     if g1 is None:
         g1, g2, src = cagr3, cagr3, "3-year historical CAGR (no consensus), fading to 4.0%"
     g2 = g1 if g2 is None else g2
-    g1, g2 = _clip(g1, -0.3, 0.8, 0.05), _clip(g2, -0.3, 0.8, 0.05)
+    g1, g2 = _clip(g1, -0.5, 2.0, 0.05), _clip(g2, -0.5, 2.0, 0.05)  # wide: only catches data errors
     fade = np.linspace(g2, 0.04, 5)[1:4]
     growth = [g1, g2, *fade]
 

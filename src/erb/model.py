@@ -54,6 +54,7 @@ class Scenario:
     margin_delta: float = 0.0
     multiple_delta: float = 0.0  # fractional change, e.g. +0.10 = multiples 10% higher
     wacc_delta: float = 0.0
+    growth_path: list | None = None  # optional absolute revenue growth by year (e.g. a cyclical downturn); replaces base growth
 
 
 def scenario(a: dict, name: str) -> Scenario:
@@ -88,7 +89,7 @@ def project(a: dict, sc: Scenario) -> pd.DataFrame:
     segs = rev_cfg.get("segments") or {"Total": {"base": rev_cfg["base"], "growth": rev_cfg["growth"]}}
     seg_rev = {}
     for name, cfg in segs.items():
-        g = _vec(cfg["growth"], n) + sc.growth_delta
+        g = (_vec(sc.growth_path, n) if sc.growth_path is not None else _vec(cfg["growth"], n)) + sc.growth_delta
         seg_rev[name] = float(cfg["base"]) * np.cumprod(1 + g)
     revenue = sum(seg_rev.values())
     base_rev = sum(float(c["base"]) for c in segs.values())

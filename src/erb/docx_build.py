@@ -325,6 +325,10 @@ def md_table(container, lines: list[str]):
         return
     header = [SOURCE_TAG.sub("", c).replace("**", "") for c in rows[0]]
     body = [[SOURCE_TAG.sub("", c).replace("**", "") for c in r] for r in rows[1:]]
+    # drop columns left empty once source tags are stripped (e.g. a "Source" column of [Sn] tags)
+    keep = [j for j in range(len(header)) if any(j < len(r) and r[j].strip() for r in body)]
+    header = [header[j] for j in keep]
+    body = [[r[j] if j < len(r) else "" for j in keep] for r in body]
     # widths proportional to content (text-heavy columns get room), capped to the text width
     lens = [max(len(r[j]) if j < len(r) else 0 for r in [header] + body) for j in range(len(header))]
     lens = [min(max(n, 6), 60) for n in lens]
@@ -883,7 +887,7 @@ def sidebar(cell, ctx: Ctx, w: float) -> None:
                 shade(cc, COL["paper"])
     widths(t3, [w * 0.25, w * 0.24, w * 0.24, w * 0.24])
     if any("override" in (k or "") for y in years for k in et["years"][y]["kinds"]):
-        small(cell, "*Street-basis reported EPS (excludes one-time tax items); other actuals from filings, "
+        small(cell, "*Company-reported Street-basis (non-GAAP or adjusted) EPS; other actuals from filings, "
                     "estimates from our model.", size=5.8, italic=True)
 
     label("ANALYST")

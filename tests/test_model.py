@@ -100,3 +100,10 @@ def test_perpetuity_cross_check():
     p = model.project(x, model.Scenario())
     d = model.dcf(x, p, model.wacc(x, model.Scenario()))
     assert d["terminal_value"] == pytest.approx(38.72 * 1.03 / (0.10 - 0.03), rel=1e-3)
+
+
+def test_scenario_growth_path_models_a_downturn():
+    x = a(projection_years=3, scenarios={"bear": {"growth_path": [0.10, -0.25, -0.10]}, "bull": {}})
+    p = model.project(x, model.scenario(x, "bear"))
+    assert list(p["revenue_growth"].round(4)) == [0.10, -0.25, -0.10]
+    assert p.loc[2027, "revenue"] == pytest.approx(100 * 1.10 * 0.75 * 0.90)
