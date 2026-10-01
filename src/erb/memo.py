@@ -23,19 +23,32 @@ def latest_screen() -> Path | None:
     return runs[-1] if runs else None
 
 
-def build(ticker: str, log=print) -> Path:
+def build(ticker: str, log=print, run_dir: Path | None = None, model: bool = True) -> Path:
+    """`model=False` leaves the valuation out (for offices where only an approved model's numbers
+    may be quoted); `run_dir` picks the screen run (default: the latest)."""
     t = ticker.upper()
     cdir = coverage_dir(t)
     log(f"Facts for {t}")
     facts.build(t, with_filings=False, log=lambda *_: None)
-    if not (cdir / "assumptions.yaml").exists():  # never overwrite an initiation's assumptions
-        (cdir / "assumptions.yaml").write_text(valuation.draft_assumptions(t))
-    m = valuation.run(t, log=lambda *_: None)
+    m = None
+    if model:
+        if not (cdir / "assumptions.yaml").exists():  # never overwrite an initiation's assumptions
+            (cdir / "assumptions.yaml").write_text(valuation.draft_assumptions(t))
+        m = valuation.run(t, log=lambda *_: None)
     f = valuation.load_facts(t)
     c, mk = f["company"], f["company"]["market"]
     cur = c["financial_currency"]
 
-    run_dir = latest_screen()
+    if m is not None:
+        sc = m["scenarios"]
+        valuation_lines = [
+            f"- Draft model (consensus-calibrated, untuned): **{m['rating']['rating']}**, base PT {fmt.price(sc['base']['price_target'])} "
+            f"({fmt.pct(sc['base']['price_return'])}), bear {fmt.price(sc['bear']['price_target'])}, bull {fmt.price(sc['bull']['price_target'])}",
+            *[f"  - Model warning: {w}" for w in m["warnings"]]]
+    else:
+        valuation_lines = ["- Valuation: not modelled here; to be modelled by the Quant Department if researched."]
+
+    run_dir = run_dir or latest_screen()
     rank_line = "Not in the latest screen."
     if run_dir is not None:
         s = pd.read_csv(run_dir / "screen.csv")
@@ -43,9 +56,15 @@ def build(ticker: str, log=print) -> Path:
         hit = ranked.index[ranked["ticker"] == t]
         if len(hit):
             r = ranked.loc[hit[0]]
-            rank_line = (f"Screen {run_dir.name}: #{hit[0] + 1} of {len(ranked)} · composite {r['composite']:.2f} "
-                         f"(value {_s(r['value'])}, quality {_s(r['quality'])}, growth {_s(r['growth'])}, "
-                         f"momentum {_s(r['momentum'])}) · sector group: {r['sector']}")
+            if "acceleration" in s.columns:   # a Gems run
+                rank_line = (f"Gems screen {run_dir.name}: #{hit[0] + 1} of {len(ranked)} · composite {r['composite']:.2f} "
+                             f"(acceleration {_s(r['acceleration'])}, growth {_s(r['growth'])}, margin {_s(r['margin'])}, "
+                             f"momentum {_s(r['momentum'])}) · latest-quarter revenue YoY {fmt.pct(r['yoy_q'])} vs "
+                             f"{fmt.pct(r['yoy_q1'])} the quarter before · sector group: {r['sector']}")
+            else:
+                rank_line = (f"Screen {run_dir.name}: #{hit[0] + 1} of {len(ranked)} · composite {r['composite']:.2f} "
+                             f"(value {_s(r['value'])}, quality {_s(r['quality'])}, growth {_s(r['growth'])}, "
+                             f"momentum {_s(r['momentum'])}) · sector group: {r['sector']}")
 
     a = f["annual"].dropna(subset=["revenue"]).tail(3)
     rows = [("Revenue", "revenue", lambda v: fmt.money(v, cur)), ("  YoY", "revenue_yoy", fmt.pct),
@@ -58,7 +77,6 @@ def build(ticker: str, log=print) -> Path:
     bands = c.get("multiple_bands") or {}
     pe = bands.get("ltm_pe") or {}
     ev = bands.get("ltm_ev_ebitda") or {}
-    sc = m["scenarios"]
     L = [f"# Pitch Memo: {mk.get('name') or c['name']} ({t})",
          f"{date.today()} · {fmt.price(mk['price'], mk.get('currency') or 'USD')} · market cap {fmt.money(mk.get('market_cap'))} · "
          f"{mk.get('sector')} / {mk.get('industry')}",
@@ -74,9 +92,7 @@ def build(ticker: str, log=print) -> Path:
          f"52-week range {fmt.price(mk['week52_low'])}–{fmt.price(mk['week52_high'])}",
          f"- Street: mean PT {fmt.price(mk.get('target_mean'))} ({fmt.pct((mk.get('target_mean') or 0) / mk['price'] - 1 if mk.get('target_mean') else None)} upside), "
          f"{mk.get('n_analysts')} analysts",
-         f"- Draft model (consensus-calibrated, untuned): **{m['rating']['rating']}**, base PT {fmt.price(sc['base']['price_target'])} "
-         f"({fmt.pct(sc['base']['price_return'])}), bear {fmt.price(sc['bear']['price_target'])}, bull {fmt.price(sc['bull']['price_target'])}",
-         *[f"  - Model warning: {w}" for w in m["warnings"]], "",
+         *valuation_lines, "",
          "## What could go wrong", "[VERIFY: write the 2-3 biggest risks]", "",
          "## Questions an initiation would answer", "[VERIFY: list 2-3 open questions]", "",
          "## Sources", *[f"- [F{i}] {n}: {u}" for i, (n, u) in enumerate(c["sources"], 1)]]

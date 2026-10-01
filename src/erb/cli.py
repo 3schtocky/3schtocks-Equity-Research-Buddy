@@ -70,18 +70,37 @@ def cmd_lint(args) -> None:
     sys.exit(lint.report(args.ticker))
 
 
+CORE = {"min_cap": 2.0, "weights": "0.15,0.40,0.30,0.15"}   # Ethan's saved screen (2026-09-29)
+
+
 def cmd_screen(args) -> None:
+    from datetime import date
+
+    if args.preset == "gems":
+        from . import gems
+
+        as_of = date.fromisoformat(args.as_of) if args.as_of else None
+        gems.run(top=args.top, as_of=as_of, refresh=args.refresh)
+        return
     from . import screen
 
-    w = dict(zip(("value", "quality", "growth", "momentum"), (float(x) for x in args.weights.split(","))))
-    screen.run(min_cap=args.min_cap * 1e9, top=args.top, weights=w)
+    if args.as_of:
+        sys.exit("--as-of is only supported with --preset gems")
+    min_cap, weights = args.min_cap, args.weights
+    if args.preset == "core":
+        min_cap, weights = CORE["min_cap"], CORE["weights"]
+    w = dict(zip(("value", "quality", "growth", "momentum"), (float(x) for x in weights.split(","))))
+    screen.run(min_cap=min_cap * 1e9, top=args.top, weights=w)
 
 
 def cmd_memo(args) -> None:
+    from pathlib import Path
+
     from . import memo
 
+    run_dir = Path(args.screen) if args.screen else None
     for t in args.tickers:
-        memo.build(t)
+        memo.build(t, run_dir=run_dir, model=not args.no_model)
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -129,10 +148,16 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--min-cap", type=float, default=2.0, help="Minimum market cap in $ bn (default 2)")
     p.add_argument("--top", type=int, default=30, help="Rows in screen.md (default 30)")
     p.add_argument("--weights", default="0.30,0.30,0.20,0.20", help="value,quality,growth,momentum")
+    p.add_argument("--preset", choices=["gems", "core"],
+                   help="gems: $0.3-15bn names at a growth inflection; core: Ethan's saved screen")
+    p.add_argument("--as-of", help="Gems only: run as of a past date (YYYY-MM-DD) with data public then")
+    p.add_argument("--refresh", action="store_true", help="Gems only: re-download today's prices")
     p.set_defaults(func=cmd_screen)
 
     p = sub.add_parser("memo", help="Pitch memo skeleton(s) for screened tickers")
     p.add_argument("tickers", nargs="+")
+    p.add_argument("--screen", help="Screen run folder (default: the latest)")
+    p.add_argument("--no-model", action="store_true", help="Leave the valuation out of the memo")
     p.set_defaults(func=cmd_memo)
 
     args = parser.parse_args(argv)
