@@ -235,9 +235,13 @@ def render_md(c: dict, annual: pd.DataFrame, quarterly: pd.DataFrame, seg: pd.Da
                  f"{r.get('numberOfAnalysts')} | {fmt.money(rv.get('avg'), rc)} | {fmt.pct(rv.get('growth'))} |")
     hist = [h for h in est.get("earnings_history", []) if h.get("Reported EPS") is not None][:4]
     if hist:
+        def surprise(h: dict) -> str:   # thinly covered names report EPS with no estimate
+            s = h.get("Surprise(%)")
+            return f"({s:+.1f}%)" if isinstance(s, (int, float)) and s == s else "(no surprise data)"
+
         L += ["", "Recent EPS surprises: " + "; ".join(
-            f"{h['Earnings Date']}: {fmt.price(h['Reported EPS'])} vs {fmt.price(h['EPS Estimate'])} est "
-            f"({h['Surprise(%)']:+.1f}%)" for h in hist)]
+            f"{h['Earnings Date']}: {fmt.price(h['Reported EPS'])} vs {fmt.price(h.get('EPS Estimate'))} est "
+            f"{surprise(h)}" for h in hist)]
     L.append("")
 
     if c["notes"]:
